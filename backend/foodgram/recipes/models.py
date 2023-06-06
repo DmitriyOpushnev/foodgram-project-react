@@ -173,7 +173,7 @@ class AmountIngredients(Model):
         ordering = ('recipe', )
 
     def __str__(self):
-        return f'{self.amount} {self.ingredients}'
+        return f'{self.amount} {self.ingredient}'
 
 
 class Favourite(Model):
