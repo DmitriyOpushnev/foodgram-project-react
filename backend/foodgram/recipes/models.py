@@ -213,13 +213,13 @@ class ShopingCart(Model):
     recipe = ForeignKey(
         Recipe,
         verbose_name='Рецепт в списке покупок',
-        related_name='shopping_list',  # in_buylist
+        related_name='shopping_list',
         on_delete=CASCADE,
     )
     user = ForeignKey(
         User,
         verbose_name='Пользователь создавший список покупок',
-        related_name='shopping_list',  # buylist
+        related_name='shopping_list',
         on_delete=CASCADE,
     )
 
