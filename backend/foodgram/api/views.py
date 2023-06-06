@@ -134,9 +134,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pdf_file.setFont('arimo', 14)
         height = 750
         width = 75
-        for i, item in enumerate(ingredients, 1):
+        for serial_number, item in enumerate(ingredients, 1):
             pdf_file.drawString(width, height, (
-                f'{i}. {item["ingredient__name"]} '
+                f'{serial_number}. {item["ingredient__name"]} '
                 f'- {item["amount"]} '
                 f'{item["ingredient__measurement_unit"]}')
             )
