@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import mark_safe
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
@@ -28,6 +29,10 @@ class IngredientAdmin(ImportExportModelAdmin):
     empty_value_display = EMPTY_STRING
 
 
+class AmountIngredientsInline(admin.TabularInline):
+    model = AmountIngredients
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author',)
@@ -35,10 +40,19 @@ class RecipeAdmin(admin.ModelAdmin):
         'name', 'cooking_time',
         'author', 'tags',
         'text', 'image',
+        'short_image'
     )
+    inlines = [
+        AmountIngredientsInline,
+    ]
     search_fields = ('author', 'name', 'tags',)
+    readonly_fields = ('short_image',)
     list_filter = ('author', 'name', 'tags',)
     empty_value_display = EMPTY_STRING
+
+    @admin.display(description='Иконка')
+    def short_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="80" height="60">')
 
 
 @admin.register(Tag)
@@ -58,6 +72,3 @@ class FavouriteAdmin(admin.ModelAdmin):
 class ShopingCart(admin.ModelAdmin):
     list_display = ('user', 'recipe',)
     search_fields = ('user', 'recipe',)
-
-
-admin.site.register(AmountIngredients)

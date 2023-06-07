@@ -3,9 +3,7 @@ import io
 from django.db.models import Sum
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser import utils
-from djoser.conf import settings as djoser_settings
-from djoser.views import TokenCreateView, UserViewSet
+from djoser.views import UserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -19,30 +17,20 @@ from rest_framework.response import Response
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPagination
 from api.permissions import AuthorOnlyPermission
-from api.serializers import (CreateRecipeSerializer, FavouriteSerializer,
-                             IngredientSerializer, RecipeReadSerializer,
-                             ShoppingCartSerializer, SubscribeListSerializer,
-                             TagSerializer, UserSerializer)
+from api.serializers import (CreateRecipeSerializer, CustomUserSerializer,
+                             FavouriteSerializer, IngredientSerializer,
+                             RecipeReadSerializer, ShoppingCartSerializer,
+                             SubscribeListSerializer, SubscribeSerializer,
+                             TagSerializer)
 from recipes.models import (AmountIngredients, Favourite, Ingredient, Recipe,
                             ShopingCart, Tag)
 from users.models import Subscription, User
 
 
-class CustomTokenCreateView(TokenCreateView):
-    """Кастомное представление для предоставления токена."""
-    def _action(self, serializer):
-        token = utils.login_user(self.request, serializer.user)
-        token_serializer_class = djoser_settings.SERIALIZERS.token
-        return Response(
-            data=token_serializer_class(token).data,
-            status=status.HTTP_201_CREATED
-        )
-
-
-class UserViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     """Представление для модели User."""
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
     pagination_class = CustomPagination
 
     @action(
@@ -55,18 +43,18 @@ class UserViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
 
         if request.method == 'POST':
-            serializer = SubscribeListSerializer(
-                author, data=request.data, context={'request': request}
+            serializer = SubscribeSerializer(
+               data={'author': author.id, 'user': user.id},
+               context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
-            Subscription.objects.create(user=user, author=author)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
-            get_object_or_404(
-                Subscription, user=user, author=author
-            ).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(
+            Subscription, user=user, author=author
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
@@ -89,7 +77,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Представление для модели Tag."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer

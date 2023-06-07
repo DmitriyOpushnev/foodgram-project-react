@@ -1,6 +1,5 @@
 from colorfield.fields import ColorField
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import (CASCADE, CharField, DateTimeField, ForeignKey,
                               ImageField, ManyToManyField, Model,
                               PositiveSmallIntegerField, SlugField, TextField,
@@ -11,12 +10,11 @@ from core.limits import Limits
 from core.texts import (HELP_TEXT_FOR_COOKING_TIME, HELP_TEXT_FOR_HEX_COLOR,
                         HELP_TEXT_FOR_INGREDIENT_TAG_RECIPE,
                         HELP_TEXT_FOR_INGRIDIENTS_AMOUNT)
-
-User = get_user_model()
+from users.models import User
 
 
 class Ingredient(Model):
-    """Модель ингридиента для приложения Foodgram."""
+    """Модель ингредиента для приложения Foodgram."""
 
     REQUIRED_FIELDS = ('name', 'measurement_unit',)
 
@@ -35,6 +33,12 @@ class Ingredient(Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        constraints = [
+            UniqueConstraint(
+                fields=('name', 'measurement_unit'),
+                name='unique_name_measurement_unit'
+            )
+        ]
         ordering = ('name',)
 
     def __str__(self):
@@ -64,7 +68,6 @@ class Tag(Model):
         verbose_name='Метка',
         max_length=Limits.INGRIDIENT_RECIPE_FIELDS_TAG_LENGHT.value,
         unique=True,
-        db_index=True,
         help_text=HELP_TEXT_FOR_INGREDIENT_TAG_RECIPE,
     )
 
@@ -123,7 +126,9 @@ class Recipe(Model):
         validators=[MinValueValidator(
             Limits.MIN_COOKING_TIME.value,
             message='Время приготовления не может быть меньше одной минуты'
-        )],
+        ), MaxValueValidator(
+            Limits.MAX_COOKING_TIME.value,
+            message='Время приготовления не может быть больше десяти часов')],
         help_text=HELP_TEXT_FOR_COOKING_TIME,
     )
     pub_date = DateTimeField(

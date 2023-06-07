@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (CASCADE, BooleanField, CharField,
-                              CheckConstraint, EmailField, F, ForeignKey,
-                              Model, Q, UniqueConstraint)
+from django.db.models import (CASCADE, CharField, CheckConstraint, EmailField,
+                              F, ForeignKey, Model, Q, UniqueConstraint)
 
 from api.validators import username_validator, validate_clean_text
 from core.limits import Limits
@@ -48,12 +47,6 @@ class User(AbstractUser):
         help_text=HELP_TEXT_FOR_USER,
     )
 
-    is_subscribed = BooleanField(
-        default=False,
-        verbose_name='Активная подписка',
-        help_text='Подписаться на пользователя',
-    )
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -82,7 +75,7 @@ class Subscription(Model):
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        ordering = ('-id', )
+        ordering = ('author', )
         constraints = [
             UniqueConstraint(
                 fields=('user', 'author'),
