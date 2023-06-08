@@ -25,9 +25,10 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        if user.is_anonymous or (user == obj):
-            return False
-        return user.follower.filter(author=obj).exists()
+        return (
+            (user.is_anonymous and (user == obj)) or
+            user.follower.filter(author=obj).exists()
+        )
 
 
 class SubscribeListSerializer(CustomUserSerializer):
@@ -208,9 +209,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         ingredients_list = []
         for ingredient in ingredients:
             ingredients_list.append(ingredient['id'])
-            if int(ingredient.get('amount')) < 1:
+            if 1 < int(ingredient.get('amount')) <= 30:
                 raise serializers.ValidationError(
-                    'Количество ингредиента должно быть больше 0')
+                    'Количество ингредиента должно быть больше 0 и меньше 30')
         return ingredients
 
     @staticmethod

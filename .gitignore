@@ -135,5 +135,4 @@ dmypy.json
 #others
 static/
 media/
-frontend/
 infra/database/
