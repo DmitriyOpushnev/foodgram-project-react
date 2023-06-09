@@ -136,3 +136,5 @@ dmypy.json
 static/
 media/
 infra/database/
+frontend/node_modules/
+
