@@ -165,10 +165,12 @@ class AmountIngredients(Model):
     amount = PositiveSmallIntegerField(
         verbose_name='Количество ингредиентов',
         default=Limits.MIN_INGREDIENTS_AMOUNT.value,
-        validators=[MinValueValidator(
+        validators=[
+            MinValueValidator(
                 Limits.MIN_INGREDIENTS_AMOUNT.value,
                 message='Количество ингредиентов не может быть меньше одного'
-            )],
+            )
+        ],
         help_text=HELP_TEXT_FOR_INGRIDIENTS_AMOUNT,
     )
 

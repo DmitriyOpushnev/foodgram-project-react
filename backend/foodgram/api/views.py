@@ -44,8 +44,8 @@ class CustomUserViewSet(UserViewSet):
 
         if request.method == 'POST':
             serializer = SubscribeSerializer(
-               data={'author': author.id, 'user': user.id},
-               context={'request': request}
+                data={'author': author.id, 'user': user.id},
+                context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -100,9 +100,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return CreateRecipeSerializer
 
     @action(
-            detail=False, methods=['GET'],
-            permission_classes=[IsAuthenticated]
-        )
+        detail=False, methods=['GET'],
+        permission_classes=[IsAuthenticated]
+    )
     def download_shopping_cart(self, request):
         ingredients = AmountIngredients.objects.filter(
             recipe__shopping_list__user=request.user
