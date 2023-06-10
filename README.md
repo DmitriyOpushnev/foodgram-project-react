@@ -1,5 +1,14 @@
 # Foodgram. Дипломный проект. РИДМИ БУДЕТ ДОДЕЛАН ПОСЛЕ ВТОРОЙ ЧАСТИ!
 
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+Уникальный юзернейм: admin
+Адрес электронной почты: admin@admin.ru
+Имя: admin
+Фамилия: admin
+Пароль: admin
+
 ### Используемые технологии:
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![image](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)

@@ -1,6 +1,8 @@
+import base64
+
+from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
@@ -18,17 +20,26 @@ class CustomUserSerializer(UserSerializer):
         model = User
         fields = (
             'email', 'id', 'username', 'first_name',
-            'last_name', 'is_subscribed',
+            'last_name', 'is_subscribed', 'password',
         )
         read_only_fields = ('is_subscribed', )
         extra_kwargs = {'password': {'write_only': True}, }
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
-        return (
-            (user.is_anonymous and (user == obj)) or
-            user.follower.filter(author=obj).exists()
+        return user.is_authenticated and user != obj and user.follower.filter(
+            author=obj).exists()
+
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
         )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class SubscribeListSerializer(CustomUserSerializer):
@@ -123,6 +134,16 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount', )
 
 
+class Base64ImageField(serializers.ImageField):
+    """Кастомный сериализатор для поля ImageField."""
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        return super().to_internal_value(data)
+
+
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор просмотра рецепта."""
     tags = TagSerializer(read_only=False, many=True)
@@ -191,7 +212,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return tags
 
     def validate_cooking_time(self, cooking_time):
-        if not 1 < cooking_time <= 600:
+        if not 1 <= cooking_time <= 600:
             raise serializers.ValidationError(
                 'Время приготовления должно от 1 минуты до 10 часов')
         return cooking_time
@@ -206,12 +227,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         if not ingredients:
             raise serializers.ValidationError(
                 'Отсутствуют ингридиенты')
-        ingredients_list = []
         for ingredient in ingredients:
-            ingredients_list.append(ingredient['id'])
-            if 1 < int(ingredient.get('amount')) <= 30:
+            if 0 >= int(ingredient.get('amount')) > 5000:
                 raise serializers.ValidationError(
-                    'Количество ингредиента должно быть больше 0 и меньше 30')
+                    'Количество ингредиента должно быть больше 0 и меньше 5000'
+                )
         return ingredients
 
     @staticmethod
