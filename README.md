@@ -1,18 +1,5 @@
-# Foodgram. Дипломный проект. РИДМИ БУДЕТ ДОДЕЛАН ПОСЛЕ ВТОРОЙ ЧАСТИ!
-
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-scp -r ./infra/ administrator@158.160.104.180:/home/administrator/
-
-scp -r ./docs/ administrator@158.160.104.180:/home/administrator/
-
-
-Уникальный юзернейм: admin
-Адрес электронной почты: admin@admin.ru
-Имя: admin
-Фамилия: admin
-Пароль: admin
+# Foodgram. Дипломный проект.
+[![foodgram-app workflow](https://github.com/DmitriyOpushnev/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/DmitriyOpushnev/foodgram-project-react/actions/workflows/main.yml)
 
 ### Используемые технологии:
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
@@ -21,9 +8,11 @@ scp -r ./docs/ administrator@158.160.104.180:/home/administrator/
 ![image](https://img.shields.io/badge/django%20rest-ff1709?style=for-the-badge&logo=django&logoColor=white)
 ![image](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
 ![image](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
+![image](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
+![image](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 
 ## Описание проекта:
-Это продуктовый помощник, сервис и API для него. На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+Это уникальный продуктовый помощник, сервис и API для него. На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 ## Работа с API:
 | Увидеть спецификацию API вы сможете по адресу | `.../api/docs/` |
@@ -91,3 +80,19 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_USER=postgres
 POSTGRES_DB=postgres
 ```
+
+### Настроен Workflow, который состоит из четырех шагов:
+- Проверка кода на соответствие PEP8
+- Сборка и публикация образа бекенда на DockerHub.
+- Автоматический деплой на удаленный сервер.
+- Отправка уведомления в телеграм-чат.
+
+
+### Данные для входа и адрес сервера
+```
+login - admin@admin.ru ; pass - admin
+server IP - http://158.160.104.180/
+```
+
+### Многому научился:
+[Дмитрий Опушнев](https://github.com/DmitriyOpushnev)
