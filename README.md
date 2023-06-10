@@ -3,6 +3,11 @@
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+scp -r ./infra/ administrator@158.160.104.180:/home/administrator/
+
+scp -r ./docs/ administrator@158.160.104.180:/home/administrator/
+
+
 Уникальный юзернейм: admin
 Адрес электронной почты: admin@admin.ru
 Имя: admin

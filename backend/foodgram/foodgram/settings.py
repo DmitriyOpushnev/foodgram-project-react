@@ -98,7 +98,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
-    'UPLOADED_FILES_USE_URL': False,
 }
 
 DJOSER = {
