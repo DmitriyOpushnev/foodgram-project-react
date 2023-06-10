@@ -73,12 +73,15 @@ Password: Admin
 
 ### Шаблон для .env файла
 ```
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432
 DB_ENGINE=django.db.backends.postgresql
 POSTGRES_PASSWORD=postgres
 POSTGRES_USER=postgres
 POSTGRES_DB=postgres
+ALLOWED_HOSTS='<Адрес вашего сервера> 127.0.0.1 localhost'
+SECRET_KEY='<Ваш секретный ключ>'
+DEBUG_STATUS=""
 ```
 
 ### Настроен Workflow, который состоит из четырех шагов:
