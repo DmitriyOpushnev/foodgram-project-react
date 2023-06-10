@@ -11,7 +11,8 @@ services:
 
   backend:
     container_name: foodgram-app
-    image: dmitriyopushnev/foodgram_backend:latest
+    # image: dmitriyopushnev/foodgram_backend:latest
+    build: ../backend/foodgram/
     restart: always
     volumes:
       - static_value:/app/static/
@@ -23,7 +24,7 @@ services:
 
   frontend:
     container_name: foodgram-front
-    image: dmitriyopushnev/foodgram_frontend:v2
+    image: dmitriyopushnev/foodgram_frontend:latest
     volumes:
       - ./frontend/:/app/result_build/
     depends_on:
