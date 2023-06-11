@@ -168,9 +168,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return obj.shopping_list.filter(user=request.user).exists()
 
 
+class WriteIngredientPortionSerializer(serializers.ModelSerializer):
+    """IngredientPortion nested field for Recipe requests w/ unsafe methods."""
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+
+    class Meta:
+        model = AmountIngredients
+        fields = ('id', 'amount')
+
+
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для создания рецепта."""
-    ingredients = IngredientRecipeSerializer(
+    ingredients = WriteIngredientPortionSerializer(
         many=True,
     )
     tags = serializers.PrimaryKeyRelatedField(
