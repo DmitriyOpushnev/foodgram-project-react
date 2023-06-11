@@ -185,8 +185,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients',
-            'name', 'image', 'text', 'cooking_time',
+            'tags', 'ingredients', 'name',
+            'image', 'text', 'cooking_time',
         )
 
     def validate_tags(self, tags):
