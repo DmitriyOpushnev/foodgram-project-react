@@ -119,9 +119,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор связи ингридиентов и рецепта."""
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
+    id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -168,8 +166,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return obj.shopping_list.filter(user=request.user).exists()
 
 
-class WriteIngredientPortionSerializer(serializers.ModelSerializer):
-    """IngredientPortion nested field for Recipe requests w/ unsafe methods."""
+class CreateIngredientPortionSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения ингредиентов при создании рецепта."""
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
 
     class Meta:
@@ -179,7 +177,7 @@ class WriteIngredientPortionSerializer(serializers.ModelSerializer):
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для создания рецепта."""
-    ingredients = WriteIngredientPortionSerializer(
+    ingredients = CreateIngredientPortionSerializer(
         many=True,
     )
     tags = serializers.PrimaryKeyRelatedField(
@@ -223,7 +221,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Отсутствуют ингридиенты')
         for ingredient in ingredients:
-            if 0 >= int(ingredient.get('amount')) > 5000:
+            if not 0 < int(ingredient.get('amount')) < 5000:
                 raise serializers.ValidationError(
                     'Количество ингредиента должно быть больше 0 и меньше 5000'
                 )
