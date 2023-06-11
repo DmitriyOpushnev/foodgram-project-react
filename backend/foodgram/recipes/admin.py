@@ -31,11 +31,12 @@ class IngredientAdmin(ImportExportModelAdmin):
 
 class AmountIngredientsInline(admin.TabularInline):
     model = AmountIngredients
+    min_num = 1
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author',)
+    list_display = ('name', 'author', 'short_image', )
     fields = (
         'name', 'cooking_time',
         'author', 'tags',
