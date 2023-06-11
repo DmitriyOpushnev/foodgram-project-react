@@ -179,14 +179,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         error_messages={'does_not_exist': 'Указанного тега не существует.'}
     )
     image = Base64ImageField(max_length=None)
-    author = CustomUserSerializer(read_only=True)
-    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = (
-            'tags', 'ingredients', 'name',
-            'image', 'text', 'cooking_time',
+            'ingredients', 'tags', 'image',
+            'name', 'text', 'cooking_time'
         )
 
     def validate_tags(self, tags):
