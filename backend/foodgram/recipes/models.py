@@ -153,11 +153,13 @@ class AmountIngredients(Model):
     recipe = ForeignKey(
         Recipe,
         verbose_name='Связанные рецепты',
+        related_name='ingredient',
         on_delete=CASCADE,
     )
     ingredient = ForeignKey(
         Ingredient,
         verbose_name='Наименование ингредиентов',
+        related_name='recipe',
         on_delete=CASCADE,
     )
     amount = PositiveSmallIntegerField(
@@ -175,7 +177,6 @@ class AmountIngredients(Model):
     class Meta:
         verbose_name = 'Количество ингридиентов'
         verbose_name_plural = 'Количество ингридиентов'
-        default_related_name = 'portions'
         ordering = ('recipe', )
 
     def __str__(self):
@@ -188,18 +189,19 @@ class Favourite(Model):
     recipe = ForeignKey(
         Recipe,
         verbose_name='Понравившиеся рецепты',
+        related_name='favorites',
         on_delete=CASCADE,
     )
     user = ForeignKey(
         User,
         verbose_name='Пользователь',
+        related_name='favorites',
         on_delete=CASCADE,
     )
 
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
-        default_related_name = 'favorites'
         constraints = [
             UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -218,18 +220,19 @@ class ShopingCart(Model):
     recipe = ForeignKey(
         Recipe,
         verbose_name='Рецепт в списке покупок',
+        related_name='shopping_list',
         on_delete=CASCADE,
     )
     user = ForeignKey(
         User,
         verbose_name='Пользователь создавший список покупок',
+        related_name='shopping_list',
         on_delete=CASCADE,
     )
 
     class Meta:
         verbose_name = 'Рецепт в списке покупок'
         verbose_name_plural = 'Рецепты в списке покупок'
-        default_related_name = 'shopping_list'
         constraints = [
             UniqueConstraint(
                 fields=['user', 'recipe'],
