@@ -133,7 +133,7 @@ class ReadIngredientRecipeSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор просмотра рецепта."""
     tags = TagSerializer(read_only=False, many=True)
-    author = CustomUserSerializer(read_only=True, many=False)
+    author = CustomUserSerializer(read_only=True)
     ingredients = ReadIngredientRecipeSerializer(many=True, source='portions')
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
@@ -163,8 +163,8 @@ class WriteIngredientPortionSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
 
     class Meta:
-        fields = ('id', 'amount')
         model = AmountIngredients
+        fields = ('id', 'amount')
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
@@ -176,14 +176,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         error_messages={'does_not_exist': 'Указанного тега не существует.'}
     )
     image = Base64ImageField(max_length=None)
-    author = CustomUserSerializer(read_only=True)
-    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients',
-            'name', 'image', 'text', 'cooking_time',
+            'ingredients', 'tags', 'image',
+            'name', 'text', 'cooking_time'
         )
 
     def validate_tags(self, tags):
@@ -222,16 +220,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     @staticmethod
     def add_ingredients_and_tags(self, ingredients, tags, recipe):
         recipe.tags.set(tags)
-        ingredient_list = []
-        for ingredient in ingredients:
-            ingredient_list.append(
-                AmountIngredients(
-                    recipe=recipe,
-                    ingredient=ingredient['id'],
-                    amount=ingredient['amount'],
-                )
-            )
-        AmountIngredients.objects.bulk_create(ingredient_list)
+        AmountIngredients.objects.bulk_create([AmountIngredients(
+            recipe=recipe,
+            ingredient=ingredient['id'],
+            amount=ingredient['amount'],
+        ) for ingredient in ingredients])
         return recipe
 
     def create(self, validated_data):
